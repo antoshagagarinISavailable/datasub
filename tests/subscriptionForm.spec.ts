@@ -3,17 +3,16 @@ import { SubscriptionFormPage } from '../pageObject/subscriptionFormPage';
 import { TEST_DATA } from './testData';
 import { FORM_CONSTANTS, SUBMIT_BUTTON_TEXT } from '../pageObject/constants';
 
-test.describe('Subscription Form Tests', () => {
+test.describe('Тесты формы', () => {
     let subscriptionFormPage: SubscriptionFormPage;
 
     test.beforeEach(async ({ page }) => {
         subscriptionFormPage = new SubscriptionFormPage(page);
-        await page.goto('https://qatest.datasub.com/');
+        await subscriptionFormPage.goto();
     });
 
 
-    // Happy path test
-    test('should successfully submit the form with valid data', async () => {
+    test('Должен успешно отправить форму с корректными данными', async () => {
         const { 
             NAME, 
             EMAIL,  
@@ -41,13 +40,13 @@ test.describe('Subscription Form Tests', () => {
         // Заполняем форму
         await subscriptionFormPage.fillForm(NAME, EMAIL, SERVICE, PURPOSE, WITHDRAWAL_OPTIONS, MESSAGE);
 
-        // Проверяем, что выбрана цель формы
+        // Проверяем, что выбрана purpose
         expect(await subscriptionFormPage.isPurposeSelected(), `radio button "${FORM_CONSTANTS.FIELD_NAMES.PURPOSE_BUSINESS}" должен быть выбран`).toBe(true);
 
-        // Проверяем, что выбран сервис
+        // Проверяем, что выбран service
         expect(await subscriptionFormPage.isServiceSelected(), `select "${FORM_CONSTANTS.FIELD_NAMES.SERVICE}" должен быть выбран`).toBe(true);
 
-        // Проверяем, что выбраны способы вывода средств
+        // Проверяем, что выбраны withdrawal options
         for (const option of WITHDRAWAL_OPTIONS) {
             expect(await subscriptionFormPage.isWithdrawalOptionSelected(option), `checkbox "${option}" должен быть выбран`).toBe(true);
         }
@@ -64,8 +63,7 @@ test.describe('Subscription Form Tests', () => {
         expect(await subscriptionFormPage.isFormSubmitted()).toBe(true);
     });
 
-    // Negative test
-    test('should show validation errors with invalid data', async () => {
+    test('Должен показывать ошибки валидации при вводе некорректных данных', async () => {
         const {
             NAME,
             EMAIL,
@@ -91,13 +89,13 @@ test.describe('Subscription Form Tests', () => {
         expect(await subscriptionFormPage.isWithdrawCryptoVisible(), `Чекбокс "${FORM_CONSTANTS.VALUES.WITHDRAWAL_OPTIONS[2]}" должен быть видимым`).toBe(true);
 
 
-        // Проверяем, что цель формы не выбрана
+        // Проверяем, что purpose не выбран
         expect(await subscriptionFormPage.isPurposeSelected()).toBe(false);
 
-        // Проверяем, что сервис не выбран
+        // Проверяем, что service не выбран
         expect(await subscriptionFormPage.isServiceSelected()).toBe(false);
 
-        // Проверяем, что способы вывода средств не выбраны
+        // Проверяем, что withdrawal options не выбраны
         for (const option of FORM_CONSTANTS.VALUES.WITHDRAWAL_OPTIONS) {
             expect(await subscriptionFormPage.isWithdrawalOptionSelected(option), `checkbox "${option}" должен быть выбран`).toBe(false);
         }

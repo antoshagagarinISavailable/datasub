@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { FORM_CONSTANTS } from './constants';
 
 export class SubscriptionFormPage {
@@ -19,6 +19,10 @@ export class SubscriptionFormPage {
 
     constructor(page: Page) {
         this.page = page;
+    }
+
+    async goto(): Promise<void> {
+        await this.page.goto('https://qatest.datasub.com/');
     }
 
     // Методы для взаимодействия с формой
@@ -76,17 +80,6 @@ export class SubscriptionFormPage {
     async submitForm(): Promise<void> {
         await this.page.locator(this.submitButton).waitFor({ state: 'visible', timeout: 5000 });
         await this.page.click(this.submitButton);
-    }
-
-    // Методы для проверки состояния формы
-    async isNameInputEmpty(): Promise<boolean> {
-        const value = await this.page.inputValue(this.nameInput);
-        return value === '';
-    }
-
-    async isEmailInputEmpty(): Promise<boolean> {
-        const value = await this.page.inputValue(this.emailInput);
-        return value === '';
     }
 
     async isServiceSelected(): Promise<boolean> {
